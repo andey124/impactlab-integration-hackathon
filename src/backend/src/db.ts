@@ -1,5 +1,6 @@
 import { DatabaseSync } from 'node:sqlite'
 import { randomUUID } from 'node:crypto'
+import { buildSeed } from './seed.ts'
 
 export type NextStep = {
   text: string
@@ -109,4 +110,28 @@ export function updateNode(
 
 export function clearNodes(): void {
   db.exec('DELETE FROM nodes')
+}
+
+/**
+ * Populates the demo path with the seeded migration journey in `lang` (English
+ * fallback) — but only when the path is empty, so it never overwrites real data.
+ */
+export function seedIfEmpty(lang: string): void {
+  const { n } = db.prepare('SELECT COUNT(*) AS n FROM nodes').get() as unknown as { n: number }
+  if (Number(n) > 0) return
+  const insert = db.prepare(
+    'INSERT INTO nodes (id, title, status, translation, next_steps, created_at) VALUES (?, ?, ?, ?, ?, ?)',
+  )
+  // Offset each createdAt by its index so listNodes keeps the authored order.
+  const base = Date.now()
+  buildSeed(lang).forEach((node, i) => {
+    insert.run(
+      randomUUID(),
+      node.title,
+      node.status,
+      node.translation,
+      JSON.stringify(node.nextSteps),
+      new Date(base + i).toISOString(),
+    )
+  })
 }

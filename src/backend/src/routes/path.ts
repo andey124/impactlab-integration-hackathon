@@ -1,9 +1,14 @@
 import { Router } from 'express'
-import { listNodes, createNode, updateNode, clearNodes, type NextStep } from '../db.ts'
+import { listNodes, createNode, updateNode, clearNodes, seedIfEmpty, type NextStep } from '../db.ts'
 
 export const pathRouter = Router()
 
-pathRouter.get('/path', (_req, res) => {
+pathRouter.get('/path', (req, res) => {
+  // A `lang` param means a real client is opening the path: seed the demo journey
+  // (in that language) when it's empty. Without `lang` the path is left as-is.
+  if (typeof req.query.lang === 'string' && req.query.lang.length > 0) {
+    seedIfEmpty(req.query.lang)
+  }
   res.json({ nodes: listNodes() })
 })
 

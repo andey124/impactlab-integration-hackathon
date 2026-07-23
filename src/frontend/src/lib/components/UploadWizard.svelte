@@ -10,6 +10,27 @@
 
 	let error = $state<string | null>(null);
 
+	// Mock progress phases shown while the single analyze call is in flight.
+	const phaseKeys = [
+		'wizard_phase_understanding',
+		'wizard_phase_translating',
+		'wizard_phase_suggesting'
+	] as const;
+	let phase = $state(0);
+
+	$effect(() => {
+		if (uploadDraft.status !== 'submitting') {
+			phase = 0;
+			return;
+		}
+		phase = 0;
+		const id = setInterval(() => {
+			// Advance, but hold on the last phase until the real response arrives.
+			if (phase < phaseKeys.length - 1) phase += 1;
+		}, 2500);
+		return () => clearInterval(id);
+	});
+
 	async function submit() {
 		error = null;
 		uploadDraft.status = 'submitting';
@@ -31,7 +52,16 @@
 	<div class="loading">
 		<div class="spinner"></div>
 		<p class="headline" style="font-size:1.3rem">{t('wizard_loading_heading')}</p>
-		<p class="subtle">{t('wizard_loading_subtitle')}</p>
+		<ul class="phases" aria-live="polite">
+			{#each phaseKeys as key, i}
+				<li class="phase" class:phase--active={i === phase} class:phase--done={i < phase}>
+					<span class="phase__icon">
+						{#if i < phase}✓{:else if i === phase}…{:else}○{/if}
+					</span>
+					{t(key)}
+				</li>
+			{/each}
+		</ul>
 	</div>
 {:else}
 	<div style="text-align:center">

@@ -65,9 +65,28 @@ function mediaType(base64: string): 'image/png' | 'image/gif' | 'image/webp' | '
   return 'image/jpeg'
 }
 
-/** Accepts either a bare base64 string or a `data:image/png;base64,...` URL. */
+/** Accepts either a bare base64 string or a `data:...;base64,...` URL. */
 function stripDataUrl(image: string): string {
   return image.replace(/^data:[^;]+;base64,/, '')
+}
+
+/**
+ * Turns one uploaded page into a Claude content block. PDFs (base64 `%PDF` →
+ * `JVBER`) become `document` blocks, which Claude expands page by page; images
+ * stay `image` blocks. A single multi-page PDF therefore needs only one entry.
+ */
+export function toContentBlock(image: string) {
+  const data = stripDataUrl(image)
+  if (data.startsWith('JVBER')) {
+    return {
+      type: 'document' as const,
+      source: { type: 'base64' as const, media_type: 'application/pdf' as const, data },
+    }
+  }
+  return {
+    type: 'image' as const,
+    source: { type: 'base64' as const, media_type: mediaType(data), data },
+  }
 }
 
 export async function analyzeDocument(images: string[], targetLang: string): Promise<Analysis> {
@@ -89,16 +108,10 @@ export async function analyzeDocument(images: string[], targetLang: string): Pro
       {
         role: 'user',
         content: [
-          ...images.map((image) => {
-            const data = stripDataUrl(image)
-            return {
-              type: 'image' as const,
-              source: { type: 'base64' as const, media_type: mediaType(data), data },
-            }
-          }),
+          ...images.map(toContentBlock),
           {
             type: 'text' as const,
-            text: 'These images are the pages of one document, in order. Call record_analysis with the translation and the next steps.',
+            text: 'These images and PDF files are the pages of one document, in order. Call record_analysis with the translation and the next steps.',
           },
         ],
       },

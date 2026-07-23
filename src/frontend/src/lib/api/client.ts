@@ -16,8 +16,12 @@ async function request<T>(
 	return response.json() as Promise<T>;
 }
 
-export function fetchPath(fetchImpl: typeof fetch = fetch): Promise<{ nodes: PathNode[] }> {
-	return request('/api/path', undefined, fetchImpl);
+export function fetchPath(
+	fetchImpl: typeof fetch = fetch,
+	lang?: string
+): Promise<{ nodes: PathNode[] }> {
+	const query = lang ? `?lang=${encodeURIComponent(lang)}` : '';
+	return request(`/api/path${query}`, undefined, fetchImpl);
 }
 
 export function resetPath(): Promise<{ nodes: PathNode[] }> {
