@@ -1,2 +1,6 @@
 zollhof-recognition-data-pack
 Data
+node_modules/
+.env
+src/backend/data/
+*.db
