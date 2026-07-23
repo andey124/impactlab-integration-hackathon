@@ -36,8 +36,9 @@ Priority order, in case time runs out partway through:
 - `/` is a vertical winding path (Skeleton UI styled into circles), each node `locked` / `active` /
   `done`. Tapping a `done` or `active` node expands a bottom-sheet overlay **in place** — no navigation
   — showing that node's translation and next steps. `locked` nodes are greyed and non-interactive.
-- `/upload` is reached via one always-visible `+ Add a letter` button on `/`. Self-contained wizard:
-  capture → optionally add more pages → submit → redirect back to `/` with the new node auto-expanded.
+- `/upload` is reached via a `+ Add a letter` button on `/`, enabled only when no node is currently
+  `active` (one un-done node at a time). Self-contained wizard: capture → optionally add more pages →
+  submit → redirect back to `/` with the new node auto-expanded.
 - Deliberately no `/node/[id]` route: node detail is state on `/`, preserving the "tap and it opens
   right there" feel that makes a path UI (rather than a plain list) worth building.
 
@@ -51,8 +52,10 @@ is built against:
 - `GET /api/path` → `{ nodes: PathNode[] }`
 - `POST /api/analyze-document` `{ images: string[], targetLang }` → `{ translation, nextSteps }`
   (the Claude-API-backed call)
-- `POST /api/path/nodes` `{ title, translation, nextSteps }` → `{ node }`
-- `PATCH /api/path/nodes/:id` `{ status: 'done' }` → `{ node, unlocked? }`
+- `POST /api/path/nodes` `{ title, translation, nextSteps }` → `{ node }` (always `status: 'active'`;
+  nodes only exist once created from an upload, so there's nothing to lock ahead of time — the
+  frontend enforces one active node at a time by disabling new uploads until it's marked done)
+- `PATCH /api/path/nodes/:id` `{ status: 'done' }` → `{ node }` (no unlock mechanic needed today)
 
 `targetLang` is an ISO code from the frontend's curated shortlist (`tr`, `ar`, `uk`, `ru`, `pl`, `ro`,
 `en`, `fa`, `de`), set once at onboarding and sent with every translation-dependent request.
@@ -99,9 +102,9 @@ submit but never reaches into `pathState`'s internals.
    `POST /api/path/nodes` with the result.
 5. **Return to path** → redirect to `/`; new node appears `active`; its `NodeDetailSheet` auto-expands
    once so the translation/next-steps are visible without an extra tap.
-6. **Mark done** → user taps "Mark done" in the sheet → `PATCH` → node flips to `done`; the next
-   `locked` node flips to `active` (a placeholder circle inviting the next `+ Add a letter`, since every
-   node in this MVP originates from an upload).
+6. **Mark done** → user taps "Mark done" in the sheet → `PATCH` → node flips to `done`. The path now
+   ends at this `done` node; `+ Add a letter` (disabled while a node was `active`) becomes available
+   again, ready to create the next real node once the user uploads the next letter.
 
 ## Error Handling
 
