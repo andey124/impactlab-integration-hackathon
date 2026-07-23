@@ -224,6 +224,13 @@ h3 {
 	box-shadow: var(--shadow-sm);
 	transform: translateY(-1px);
 }
+.lang-card--active {
+	border-color: var(--primary);
+	background: var(--primary-tint);
+}
+.lang-card--active .lang-card__native {
+	color: var(--primary);
+}
 .lang-card__native {
 	font-size: 1.3rem;
 	font-weight: 800;
@@ -579,6 +586,25 @@ h3 {
 .error-text {
 	color: var(--danger);
 	font-weight: 700;
+}
+
+/* ---------- Language FAB ---------- */
+.lang-fab {
+	position: fixed;
+	top: 1rem;
+	right: 1.25rem;
+	border: none;
+	background: var(--surface);
+	border-radius: 2rem;
+	padding: .35rem .75rem;
+	font-size: 1.1rem;
+	cursor: pointer;
+	box-shadow: var(--shadow);
+	z-index: 30;
+	line-height: 1;
+}
+.lang-fab:hover {
+	background: var(--primary-tint);
 }
 
 /* ---------- Help ---------- */

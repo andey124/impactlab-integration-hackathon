@@ -2,6 +2,7 @@
 	import { goto } from '$app/navigation';
 	import type { PageData } from './$types';
 	import { pathState } from '$lib/state/pathState.svelte';
+	import { t, tFn } from '$lib/i18n';
 	import Brand from '$lib/components/Brand.svelte';
 	import PathView from '$lib/components/PathView.svelte';
 	import HelpOverlay from '$lib/components/HelpOverlay.svelte';
@@ -23,29 +24,27 @@
 	{#if data.connectionError}
 		<div class="card state">
 			<div class="state__emoji" aria-hidden="true">🔌</div>
-			<h1 class="headline">We're having trouble connecting</h1>
-			<p class="subtle">Please check your internet and try again.</p>
+			<h1 class="headline">{t('home_error_heading')}</h1>
+			<p class="subtle">{t('home_error_subtitle')}</p>
 			<button class="btn btn-primary btn-lg btn-block" onclick={() => location.reload()}>
-				Try again
+				{t('home_error_retry')}
 			</button>
 		</div>
 	{:else if pathState.nodes.length === 0}
 		<div class="card state">
 			<div class="state__emoji" aria-hidden="true">✉️</div>
-			<h1 class="headline">Let's get started</h1>
-			<p class="subtle">
-				Add your first letter from a German office and we'll explain it in your language.
-			</p>
+			<h1 class="headline">{t('home_empty_heading')}</h1>
+			<p class="subtle">{t('home_empty_subtitle')}</p>
 			<button class="btn btn-primary btn-lg btn-block" onclick={() => goto('/upload')}>
-				+ Add a letter
+				{t('home_add')}
 			</button>
 		</div>
 	{:else}
 		<div style="text-align:center">
-			<p class="eyebrow">Your path</p>
-			<h1 class="headline" style="margin-top:.25rem">Your next steps</h1>
+			<p class="eyebrow">{t('home_eyebrow')}</p>
+			<h1 class="headline" style="margin-top:.25rem">{t('home_heading')}</h1>
 			<p class="subtle" style="margin-top:.35rem">
-				{doneCount} of {pathState.nodes.length} done — tap a step to see the details.
+				{tFn('home_progress')(doneCount, pathState.nodes.length)}
 			</p>
 		</div>
 
@@ -56,16 +55,14 @@
 			disabled={pathState.hasActiveNode}
 			onclick={() => goto('/upload')}
 		>
-			+ Add a letter
+			{t('home_add')}
 		</button>
 		{#if pathState.hasActiveNode}
 			<p class="subtle" style="text-align:center;margin-top:-.5rem;font-size:.9rem">
-				Finish your current step first.
+				{t('home_active_block')}
 			</p>
 		{/if}
 	{/if}
 </main>
 
-<HelpOverlay
-	text="This is your path. Each circle is a letter you've added. Tap one to see what it says and what to do next. Add a new letter with the button at the bottom."
-/>
+<HelpOverlay text={t('help_home')} />

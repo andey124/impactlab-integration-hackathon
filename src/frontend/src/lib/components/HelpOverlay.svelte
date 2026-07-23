@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { t } from '$lib/i18n';
+
 	let { text }: { text: string } = $props();
 
 	let open = $state(false);
@@ -18,7 +20,7 @@
 		<div class="modal" role="dialog" aria-modal="true">
 			<div class="state__emoji" aria-hidden="true">💡</div>
 			<p style="font-size:1.1rem">{text}</p>
-			<button class="btn btn-primary btn-block" onclick={() => (open = false)}>Got it</button>
+			<button class="btn btn-primary btn-block" onclick={() => (open = false)}>{t('help_close')}</button>
 		</div>
 	</div>
 {/if}

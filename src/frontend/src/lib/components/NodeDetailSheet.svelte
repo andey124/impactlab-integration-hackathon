@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { PathNode } from '$lib/types';
 	import { pathState } from '$lib/state/pathState.svelte';
+	import { t } from '$lib/i18n';
 	import { markNodeDone } from '$lib/api/client';
 
 	let { node, onClose }: { node: PathNode; onClose: () => void } = $props();
@@ -30,11 +31,11 @@
 	<div class="sheet" role="dialog" aria-modal="true">
 		<div class="sheet__grip"></div>
 		<p class="eyebrow">{node.title}</p>
-		<h2 class="headline" style="font-size:1.35rem;margin:.35rem 0 .9rem">What this letter says</h2>
+		<h2 class="headline" style="font-size:1.35rem;margin:.35rem 0 .9rem">{t('sheet_says')}</h2>
 		<p class="sheet__translation" dir="auto">{node.translation}</p>
 
 		{#if node.nextSteps.length > 0}
-			<h3 class="headline" style="font-size:1.15rem;margin:1.4rem 0 .2rem">What to do next</h3>
+			<h3 class="headline" style="font-size:1.15rem;margin:1.4rem 0 .2rem">{t('sheet_next')}</h3>
 			<ol class="steps">
 				{#each node.nextSteps as step, i}
 					<li class="step">
@@ -47,7 +48,7 @@
 										<circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2.2" />
 										<path d="M12 7v5l3 2" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" />
 									</svg>
-									Due {step.dueDate}
+								{t('sheet_due')} {step.dueDate}
 								</span>
 							{/if}
 							{#if step.formLinks && step.formLinks.length > 0}
@@ -72,9 +73,9 @@
 				disabled={marking}
 				onclick={handleMarkDone}
 			>
-				{marking ? 'Saving…' : 'Mark this done'}
+				{marking ? t('sheet_saving') : t('sheet_mark_done')}
 			</button>
 		{/if}
-		<button class="btn btn-ghost btn-block" style="margin-top:.6rem" onclick={onClose}>Close</button>
+		<button class="btn btn-ghost btn-block" style="margin-top:.6rem" onclick={onClose}>{t('sheet_close')}</button>
 	</div>
 </div>
