@@ -5,3 +5,4 @@ node_modules/
 src/backend/data/
 *.db
 docs-examples
+docs
