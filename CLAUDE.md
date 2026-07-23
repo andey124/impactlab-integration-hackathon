@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository. This Repository is a Hackathon Project for the Zollhof Social Impact Event. 
 
 ## 1. Think Before Coding
 
