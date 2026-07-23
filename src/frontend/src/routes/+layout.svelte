@@ -10,11 +10,11 @@
 
 	$effect(() => {
 		if (!browser) return;
+		// First-time visitors are sent to onboarding. Confirmed users are NOT
+		// forced away from it, so onboarding stays reachable for changing language.
 		const onOnboarding = page.url.pathname === '/onboarding';
 		if (!userLocale.confirmed && !onOnboarding) {
 			goto('/onboarding');
-		} else if (userLocale.confirmed && onOnboarding) {
-			goto('/');
 		}
 	});
 </script>
