@@ -87,3 +87,53 @@ Key points worth knowing up front:
   NOT redistribute" section of the data pack README before integrating any of them.
 - Handbook Germany is CC BY-NC-ND and explicitly disallows AI crawlers — do not use it as a source for
   generated/derived content.
+
+## Frontend ↔ Backend API Contract (DocuAId)
+
+The SvelteKit frontend (`src/frontend`) is being built against this contract. The backend does not
+exist yet — implement it to match this shape so the frontend can integrate without changes.
+
+**PathNode** (core shape, returned by the path endpoints and rendered on the frontend's path/home screen):
+
+```ts
+type PathNode = {
+  id: string
+  title: string              // short label, e.g. "Anmeldung bestätigen"
+  status: 'locked' | 'active' | 'done'
+  translation: string        // translated document text, in the user's target language
+  nextSteps: {
+    text: string              // translated explanation of what to do
+    dueDate?: string          // ISO date, optional
+    formLinks?: { label: string; url: string }[]
+  }[]
+  createdAt: string
+}
+```
+
+**Endpoints:**
+
+```
+GET  /api/path
+  → { nodes: PathNode[] }
+  Fetched on load of the path screen.
+
+POST /api/analyze-document
+  body: { images: string[] (base64, one per page), targetLang: string }
+  → { translation: string, nextSteps: PathNode['nextSteps'] }
+  This is the Claude-API-backed call: takes one or more page images of a document from the
+  Ausländerbehörde (or similar), understands it, and returns a translation plus extracted next steps,
+  both in the user's target language.
+
+POST /api/path/nodes
+  body: { title: string, translation: string, nextSteps: [...] }
+  → { node: PathNode }
+  Appends the analyzed result as a new node (status: 'active'), and locks any node that comes after it.
+
+PATCH /api/path/nodes/:id
+  body: { status: 'done' }
+  → { node: PathNode, unlocked?: PathNode }
+  Called when the user marks a step done; unlocks the next node in the path.
+```
+
+`targetLang` is an ISO code from the frontend's curated language shortlist (e.g. `tr`, `ar`, `uk`, `ru`,
+`pl`, `ro`, `en`, `fa`, `de`), chosen once at onboarding and sent with every request needing translation.
