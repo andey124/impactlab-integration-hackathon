@@ -14,10 +14,12 @@ test('matches a German profession name to its ISCO group', { skip: !ready }, () 
   assert.equal(typeof facts.shortage, 'boolean')
 })
 
-test('falls back to German then English for a locale ESCO does not carry', { skip: !ready }, () => {
-  // ESCO has no Ukrainian; Claude has already translated the profession name,
-  // so the de/en fallback is what makes a match possible at all.
-  assert.ok(lookupOccupation('nurse', 'uk'))
+test('returns null for a Ukrainian label, which ESCO does not carry', { skip: !ready }, () => {
+  // ESCO has no Ukrainian labels, and Claude returns the profession name
+  // already translated into the target language — so a Ukrainian profession
+  // name doesn't match the de/en fallback either. This is the real, unsolved
+  // case for that locale, not a success path.
+  assert.equal(lookupOccupation('медична сестра', 'uk'), null)
 })
 
 test('returns null when nothing matches', { skip: !ready }, () => {

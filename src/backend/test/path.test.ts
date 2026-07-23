@@ -20,16 +20,17 @@ const patch = (url: string, body: unknown) =>
     body: JSON.stringify(body),
   })
 
-test('GET /api/path returns an empty node list', async () => {
+test('GET /api/path returns an empty node list', async (t) => {
   const s = await serve(app)
+  t.after(() => s.close())
   const res = await fetch(`${s.url}/api/path`)
   assert.equal(res.status, 200)
   assert.deepEqual(await res.json(), { nodes: [] })
-  await s.close()
 })
 
-test('POST /api/path/nodes appends an active node and GET returns it', async () => {
+test('POST /api/path/nodes appends an active node and GET returns it', async (t) => {
   const s = await serve(app)
+  t.after(() => s.close())
   const created = await post(`${s.url}/api/path/nodes`, {
     title: 'Anmeldung bestätigen',
     translation: 'Please confirm your registration.',
@@ -43,19 +44,19 @@ test('POST /api/path/nodes appends an active node and GET returns it', async () 
   const { nodes } = (await listed.json()) as { nodes: { id: string }[] }
   assert.equal(nodes.length, 1)
   assert.equal(nodes[0].id, node.id)
-  await s.close()
 })
 
-test('POST /api/path/nodes rejects a malformed body with 400', async () => {
+test('POST /api/path/nodes rejects a malformed body with 400', async (t) => {
   const s = await serve(app)
+  t.after(() => s.close())
   const res = await post(`${s.url}/api/path/nodes`, { title: 'only a title' })
   assert.equal(res.status, 400)
   assert.ok(typeof ((await res.json()) as { error: string }).error === 'string')
-  await s.close()
 })
 
-test('PATCH marks a node done and omits `unlocked`', async () => {
+test('PATCH marks a node done and omits `unlocked`', async (t) => {
   const s = await serve(app)
+  t.after(() => s.close())
   const created = await post(`${s.url}/api/path/nodes`, {
     title: 'Step',
     translation: 'text',
@@ -68,11 +69,11 @@ test('PATCH marks a node done and omits `unlocked`', async () => {
   const body = (await res.json()) as { node: { status: string }; unlocked?: unknown }
   assert.equal(body.node.status, 'done')
   assert.ok(!('unlocked' in body), 'append-only path never unlocks a following node')
-  await s.close()
 })
 
-test('PATCH rejects an unknown id with 404 and a bad status with 400', async () => {
+test('PATCH rejects an unknown id with 404 and a bad status with 400', async (t) => {
   const s = await serve(app)
+  t.after(() => s.close())
   const missing = await patch(`${s.url}/api/path/nodes/does-not-exist`, { status: 'done' })
   assert.equal(missing.status, 404)
 
@@ -80,5 +81,4 @@ test('PATCH rejects an unknown id with 404 and a bad status with 400', async () 
   const { node } = (await created.json()) as { node: { id: string } }
   const bad = await patch(`${s.url}/api/path/nodes/${node.id}`, { status: 'active' })
   assert.equal(bad.status, 400)
-  await s.close()
 })

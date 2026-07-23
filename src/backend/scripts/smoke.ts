@@ -16,7 +16,7 @@ async function call(method: string, path: string, body?: unknown) {
     headers: { 'Content-Type': 'application/json' },
     body: body === undefined ? undefined : JSON.stringify(body),
   })
-  const json = await res.json()
+  const json = await res.json().catch(() => null)
   if (!res.ok) {
     console.error(`${method} ${path} -> ${res.status}`, json)
     process.exit(1)

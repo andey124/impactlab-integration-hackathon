@@ -73,7 +73,7 @@ function stripDataUrl(image: string): string {
 export async function analyzeDocument(images: string[], targetLang: string): Promise<Analysis> {
   const message = await client.messages.create({
     model: MODEL,
-    max_tokens: 8000,
+    max_tokens: 16000,
     // ponytail: thinking off keeps the live-demo turn fast; this is a
     // schema-constrained extraction, not open reasoning. Switch to
     // { type: 'adaptive' } if translation quality needs it.
@@ -111,18 +111,13 @@ export async function analyzeDocument(images: string[], targetLang: string): Pro
     (block): block is Anthropic.ToolUseBlock => block.type === 'tool_use',
   )
   if (!toolUse) throw new Error('model did not call record_analysis')
-  return toolUse.input as Analysis
-}
 
-/** Translates a short backend-generated sentence into the user's language. */
-export async function translate(text: string, targetLang: string): Promise<string> {
-  const message = await client.messages.create({
-    model: MODEL,
-    max_tokens: 1000,
-    thinking: { type: 'disabled' },
-    system: `Translate the user's text into the language with ISO code "${targetLang}". Reply with the translation only.`,
-    messages: [{ role: 'user', content: text }],
-  })
-  const block = message.content.find((b): b is Anthropic.TextBlock => b.type === 'text')
-  return block ? block.text : text
+  if (message.stop_reason === 'max_tokens') {
+    throw new Error('analysis truncated — raise max_tokens')
+  }
+  const analysis = toolUse.input as Analysis
+  if (typeof analysis.translation !== 'string' || !Array.isArray(analysis.nextSteps)) {
+    throw new Error('model returned a malformed analysis')
+  }
+  return analysis
 }

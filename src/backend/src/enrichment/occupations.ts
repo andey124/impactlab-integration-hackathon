@@ -1,3 +1,8 @@
+// NOT WIRED INTO ANY ROUTE. Groundwork for the cancelled office-suggestion task.
+// Match quality is unvalidated: substring matching returns arbitrary specialisations
+// for short queries (e.g. 'Arzt' matches a veterinary-physiology specialist), and
+// ESCO carries no Ukrainian or Turkish labels, so those locales do not match at all.
+// Review before wiring this into a user-facing path.
 import { readFileSync } from 'node:fs'
 
 const PACK = new URL('../../../../zollhof-recognition-data-pack/', import.meta.url)
