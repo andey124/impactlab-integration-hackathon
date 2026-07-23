@@ -1,5 +1,6 @@
 import express from 'express'
 import { pathRouter } from './routes/path.ts'
+import { analyzeRouter } from './routes/analyze.ts'
 
 export const app = express()
 
@@ -24,3 +25,4 @@ app.get('/health', (_req, res) => {
 })
 
 app.use('/api', pathRouter)
+app.use('/api', analyzeRouter)
