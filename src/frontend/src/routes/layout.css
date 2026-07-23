@@ -457,6 +457,12 @@ h3 {
 }
 
 /* ---------- Upload ---------- */
+.capture {
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+	width: 100%;
+}
 .dropzone {
 	display: flex;
 	flex-direction: column;
@@ -507,6 +513,22 @@ h3 {
 	border-radius: var(--radius-sm);
 	border: 1px solid var(--line);
 	box-shadow: var(--shadow-sm);
+}
+.thumb__file {
+	width: 6rem;
+	height: 6rem;
+	border-radius: var(--radius-sm);
+	border: 1px solid var(--line);
+	background: var(--primary-tint);
+	color: var(--primary-strong);
+	box-shadow: var(--shadow-sm);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 0.3rem;
+	font-weight: 800;
+	font-size: 0.85rem;
 }
 .thumb__remove {
 	position: absolute;

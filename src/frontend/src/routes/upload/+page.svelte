@@ -16,5 +16,5 @@
 </main>
 
 <HelpOverlay
-	text="Take a photo of your letter. You can add more than one page if the letter is long. When you're done, tap 'Translate this letter'."
+	text="Take a photo of your letter, or upload a photo or PDF file. You can add more than one page if the letter is long. When you're done, tap 'Translate this letter'."
 />
