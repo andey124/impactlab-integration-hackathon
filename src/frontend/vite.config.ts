@@ -24,6 +24,14 @@ export default defineConfig({
 			{
 				extends: './vite.config.ts',
 				test: {
+					name: 'client',
+					environment: 'node',
+					include: ['src/**/*.svelte.{test,spec}.{js,ts}']
+				}
+			},
+			{
+				extends: './vite.config.ts',
+				test: {
 					name: 'server',
 					environment: 'node',
 					include: ['src/**/*.{test,spec}.{js,ts}'],
