@@ -4,10 +4,11 @@
 	let { onSelect }: { onSelect: (code: string) => void } = $props();
 </script>
 
-<div class="grid w-full grid-cols-2 gap-4">
+<div class="lang-grid">
 	{#each LANGUAGES as lang (lang.code)}
-		<button class="btn preset-tonal-surface p-6 text-xl" onclick={() => onSelect(lang.code)}>
-			{lang.nativeLabel}
+		<button class="lang-card" onclick={() => onSelect(lang.code)}>
+			<span class="lang-card__native" dir="auto">{lang.nativeLabel}</span>
+			<span class="lang-card__label">{lang.label}</span>
 		</button>
 	{/each}
 </div>

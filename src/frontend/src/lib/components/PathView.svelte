@@ -11,15 +11,21 @@
 	function toggle(id: string) {
 		expandedId = expandedId === id ? null : id;
 	}
+
+	const expandedNode = $derived(pathState.nodes.find((n) => n.id === expandedId) ?? null);
 </script>
 
-<ol class="flex flex-col items-center gap-6">
-	{#each pathState.nodes as node (node.id)}
-		<li class="flex flex-col items-center gap-2">
-			<PathNodeCircle {node} onTap={() => toggle(node.id)} />
-			{#if expandedId === node.id}
-				<NodeDetailSheet {node} onClose={() => (expandedId = null)} />
+<div class="path">
+	{#each pathState.nodes as node, i (node.id)}
+		<div class="path-row" data-side={i % 2 === 0 ? 'left' : 'right'}>
+			{#if i > 0}
+				<span class="path-connector"></span>
 			{/if}
-		</li>
+			<PathNodeCircle {node} onTap={() => toggle(node.id)} />
+		</div>
 	{/each}
-</ol>
+</div>
+
+{#if expandedNode}
+	<NodeDetailSheet node={expandedNode} onClose={() => (expandedId = null)} />
+{/if}

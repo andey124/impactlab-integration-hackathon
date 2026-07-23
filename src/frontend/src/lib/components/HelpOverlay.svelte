@@ -4,24 +4,21 @@
 	let open = $state(false);
 </script>
 
-<button
-	class="btn-icon preset-tonal-surface fixed bottom-4 right-4 h-14 w-14 text-2xl"
-	onclick={() => (open = true)}
-	aria-label="Help"
->
-	?
-</button>
+<button class="help-fab" onclick={() => (open = true)} aria-label="Help">?</button>
 
 {#if open}
-	<div class="fixed inset-0 flex items-center justify-center bg-black/50 p-6">
-		<div class="card preset-filled-surface-50-950 max-w-sm p-6 text-lg">
-			<p>{text}</p>
-			<button
-				class="btn preset-filled-primary-500 mt-4 w-full p-4 text-lg"
-				onclick={() => (open = false)}
-			>
-				Got it
-			</button>
+	<div
+		class="modal-backdrop"
+		role="button"
+		tabindex="-1"
+		aria-label="Close help"
+		onclick={(e) => e.target === e.currentTarget && (open = false)}
+		onkeydown={(e) => e.key === 'Escape' && (open = false)}
+	>
+		<div class="modal" role="dialog" aria-modal="true">
+			<div class="state__emoji" aria-hidden="true">💡</div>
+			<p style="font-size:1.1rem">{text}</p>
+			<button class="btn btn-primary btn-block" onclick={() => (open = false)}>Got it</button>
 		</div>
 	</div>
 {/if}

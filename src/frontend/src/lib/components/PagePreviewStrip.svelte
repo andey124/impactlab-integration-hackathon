@@ -3,15 +3,11 @@
 </script>
 
 {#if pages.length > 0}
-	<ul class="flex flex-wrap justify-center gap-3">
+	<ul class="thumbs">
 		{#each pages as page, index}
-			<li class="relative">
-				<img src={page} alt="Page {index + 1}" class="h-24 w-24 rounded-lg object-cover" />
-				<button
-					class="btn-icon preset-filled-error-500 absolute -right-2 -top-2 h-8 w-8 text-sm"
-					onclick={() => onRemove(index)}
-					aria-label="Remove page {index + 1}"
-				>
+			<li class="thumb">
+				<img src={page} alt="Page {index + 1}" />
+				<button class="thumb__remove" onclick={() => onRemove(index)} aria-label="Remove page {index + 1}">
 					✕
 				</button>
 			</li>

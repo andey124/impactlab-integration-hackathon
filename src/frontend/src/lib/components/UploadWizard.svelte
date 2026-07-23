@@ -26,19 +26,28 @@
 	}
 </script>
 
-<div class="mx-auto flex max-w-md flex-col items-center gap-6 p-6">
-	{#if uploadDraft.status === 'submitting'}
-		<p class="text-xl">Reading your letter...</p>
-	{:else}
-		<CameraCapture onCapture={(page) => uploadDraft.addPage(page)} />
-		<PagePreviewStrip pages={uploadDraft.pages} onRemove={(i) => uploadDraft.removePage(i)} />
-		{#if error}
-			<p class="text-xl text-error-500">{error}</p>
-		{/if}
-		{#if uploadDraft.pages.length > 0}
-			<button class="btn preset-filled-primary-500 w-full p-4 text-xl" onclick={submit}>
-				Submit
-			</button>
-		{/if}
+{#if uploadDraft.status === 'submitting'}
+	<div class="loading">
+		<div class="spinner"></div>
+		<p class="headline" style="font-size:1.3rem">Reading your letter…</p>
+		<p class="subtle">Translating it and finding your next steps.</p>
+	</div>
+{:else}
+	<div style="text-align:center">
+		<p class="eyebrow">New letter</p>
+		<h1 class="headline" style="margin-top:.25rem">Add your letter</h1>
+	</div>
+
+	<CameraCapture onCapture={(page) => uploadDraft.addPage(page)} hasPages={uploadDraft.pages.length > 0} />
+	<PagePreviewStrip pages={uploadDraft.pages} onRemove={(i) => uploadDraft.removePage(i)} />
+
+	{#if error}
+		<p class="error-text" style="text-align:center">{error}</p>
 	{/if}
-</div>
+
+	{#if uploadDraft.pages.length > 0}
+		<button class="btn btn-primary btn-lg btn-block" onclick={submit}>
+			Translate this letter
+		</button>
+	{/if}
+{/if}
