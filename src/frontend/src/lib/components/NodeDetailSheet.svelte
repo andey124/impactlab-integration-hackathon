@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { NextStep, PathNode } from '$lib/types';
 	import { pathState } from '$lib/state/pathState.svelte';
+	import { t } from '$lib/i18n';
 	import { markNodeDone, updateNode } from '$lib/api/client';
 
 	let { node, onClose }: { node: PathNode; onClose: () => void } = $props();
@@ -68,17 +69,17 @@
 		<div class="sheet__grip"></div>
 
 		{#if editing}
-			<p class="eyebrow">Edit letter</p>
+			<p class="eyebrow">{t('sheet_edit_eyebrow')}</p>
 			<label class="field">
-				<span class="field__label">Title</span>
+				<span class="field__label">{t('sheet_field_title')}</span>
 				<input class="field__input" bind:value={editTitle} />
 			</label>
 			<label class="field">
-				<span class="field__label">What this letter says</span>
+				<span class="field__label">{t('sheet_says')}</span>
 				<textarea class="field__input" rows="5" dir="auto" bind:value={editTranslation}></textarea>
 			</label>
 
-			<span class="field__label">Next steps</span>
+			<span class="field__label">{t('sheet_next')}</span>
 			<ol class="steps">
 				{#each editSteps as step, i (i)}
 					<li class="step">
@@ -96,7 +97,7 @@
 				{/each}
 			</ol>
 			<button class="btn btn-ghost btn-block" style="margin-top:.6rem" onclick={addStep}>
-				+ Add a step
+				{t('sheet_add_step')}
 			</button>
 
 			<button
@@ -105,7 +106,7 @@
 				disabled={saving}
 				onclick={saveEdit}
 			>
-				{saving ? 'Saving…' : 'Save changes'}
+				{saving ? t('sheet_saving') : t('sheet_save')}
 			</button>
 			<button
 				class="btn btn-ghost btn-block"
@@ -113,15 +114,15 @@
 				disabled={saving}
 				onclick={() => (editing = false)}
 			>
-				Cancel
+				{t('sheet_cancel')}
 			</button>
 		{:else}
 			<p class="eyebrow">{node.title}</p>
-			<h2 class="headline" style="font-size:1.35rem;margin:.35rem 0 .9rem">What this letter says</h2>
+			<h2 class="headline" style="font-size:1.35rem;margin:.35rem 0 .9rem">{t('sheet_says')}</h2>
 			<p class="sheet__translation" dir="auto">{node.translation}</p>
 
 			{#if node.nextSteps.length > 0}
-				<h3 class="headline" style="font-size:1.15rem;margin:1.4rem 0 .2rem">What to do next</h3>
+				<h3 class="headline" style="font-size:1.15rem;margin:1.4rem 0 .2rem">{t('sheet_next')}</h3>
 				<ol class="steps">
 					{#each node.nextSteps as step, i}
 						<li class="step">
@@ -134,7 +135,7 @@
 											<circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2.2" />
 											<path d="M12 7v5l3 2" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" />
 										</svg>
-										Due {step.dueDate}
+										{t('sheet_due')} {step.dueDate}
 									</span>
 								{/if}
 								{#if step.formLinks && step.formLinks.length > 0}
@@ -159,11 +160,11 @@
 					disabled={marking}
 					onclick={handleMarkDone}
 				>
-					{marking ? 'Saving…' : 'Mark this done'}
+					{marking ? t('sheet_saving') : t('sheet_mark_done')}
 				</button>
 			{/if}
-			<button class="btn btn-ghost btn-block" style="margin-top:.6rem" onclick={startEdit}>Edit</button>
-			<button class="btn btn-ghost btn-block" style="margin-top:.6rem" onclick={onClose}>Close</button>
+			<button class="btn btn-ghost btn-block" style="margin-top:.6rem" onclick={startEdit}>{t('sheet_edit')}</button>
+			<button class="btn btn-ghost btn-block" style="margin-top:.6rem" onclick={onClose}>{t('sheet_close')}</button>
 		{/if}
 	</div>
 </div>

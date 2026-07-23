@@ -8,11 +8,12 @@
 
 	let { children } = $props();
 
+	const onOnboarding = $derived(page.url.pathname === '/onboarding');
+
 	$effect(() => {
 		if (!browser) return;
 		// First-time visitors are sent to onboarding. Confirmed users are NOT
 		// forced away from it, so onboarding stays reachable for changing language.
-		const onOnboarding = page.url.pathname === '/onboarding';
 		if (!userLocale.confirmed && !onOnboarding) {
 			goto('/onboarding');
 		}
@@ -21,3 +22,9 @@
 
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>
 {@render children()}
+
+{#if !onOnboarding}
+	<button class="lang-fab" onclick={() => goto('/onboarding')} aria-label="Change language">
+		🌐
+	</button>
+{/if}

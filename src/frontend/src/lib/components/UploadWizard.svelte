@@ -3,6 +3,7 @@
 	import { uploadDraft } from '$lib/state/uploadDraft.svelte';
 	import { userLocale } from '$lib/state/userLocale.svelte';
 	import { pathState } from '$lib/state/pathState.svelte';
+	import { t } from '$lib/i18n';
 	import { analyzeDocument, createNode } from '$lib/api/client';
 	import CameraCapture from './CameraCapture.svelte';
 	import PagePreviewStrip from './PagePreviewStrip.svelte';
@@ -20,7 +21,7 @@
 			uploadDraft.reset();
 			goto('/path');
 		} catch {
-			error = "That didn't work — let's try again.";
+			error = t('wizard_error');
 			uploadDraft.status = 'capturing';
 		}
 	}
@@ -29,13 +30,13 @@
 {#if uploadDraft.status === 'submitting'}
 	<div class="loading">
 		<div class="spinner"></div>
-		<p class="headline" style="font-size:1.3rem">Reading your letter…</p>
-		<p class="subtle">Translating it and finding your next steps.</p>
+		<p class="headline" style="font-size:1.3rem">{t('wizard_loading_heading')}</p>
+		<p class="subtle">{t('wizard_loading_subtitle')}</p>
 	</div>
 {:else}
 	<div style="text-align:center">
-		<p class="eyebrow">New letter</p>
-		<h1 class="headline" style="margin-top:.25rem">Add your letter</h1>
+		<p class="eyebrow">{t('wizard_eyebrow')}</p>
+		<h1 class="headline" style="margin-top:.25rem">{t('wizard_heading')}</h1>
 	</div>
 
 	<CameraCapture onCapture={(page) => uploadDraft.addPage(page)} hasPages={uploadDraft.pages.length > 0} />
@@ -47,7 +48,7 @@
 
 	{#if uploadDraft.pages.length > 0}
 		<button class="btn btn-primary btn-lg btn-block" onclick={submit}>
-			Translate this letter
+			{t('wizard_submit')}
 		</button>
 	{/if}
 {/if}
