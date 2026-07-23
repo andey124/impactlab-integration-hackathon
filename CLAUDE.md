@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository. This Repository is a Hackathon Project for the Zollhof Social Impact Event. 
 
 ## 1. Think Before Coding
 
@@ -127,16 +127,12 @@ POST /api/analyze-document
 POST /api/path/nodes
   body: { title: string, translation: string, nextSteps: [...] }
   → { node: PathNode }
-  Appends the analyzed result as a new node (status: 'active'). In this linear MVP, nodes are only
-  created from an upload's analyzed result, so there is never a pre-existing later node to lock —
-  the frontend enforces "one active node at a time" itself by disabling new uploads while an active
-  node exists. `locked` is reserved for a future non-linear/branching track and is not produced today.
+  Appends the analyzed result as a new node (status: 'active'), and locks any node that comes after it.
 
 PATCH /api/path/nodes/:id
   body: { status: 'done' }
-  → { node: PathNode }
-  Called when the user marks a step done. No unlocking mechanic needed today — the frontend re-enables
-  new uploads once the active node is done.
+  → { node: PathNode, unlocked?: PathNode }
+  Called when the user marks a step done; unlocks the next node in the path.
 ```
 
 `targetLang` is an ISO code from the frontend's curated language shortlist (e.g. `tr`, `ar`, `uk`, `ru`,
