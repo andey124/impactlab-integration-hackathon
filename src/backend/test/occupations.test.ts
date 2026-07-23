@@ -23,3 +23,9 @@ test('falls back to German then English for a locale ESCO does not carry', { ski
 test('returns null when nothing matches', { skip: !ready }, () => {
   assert.equal(lookupOccupation('zzzz-not-a-profession', 'de'), null)
 })
+
+test('reports a doctor as regulated via the 221 minor-group entry', { skip: !ready }, () => {
+  const facts = lookupOccupation('Arzt für Allgemeinmedizin', 'de')
+  assert.ok(facts, 'expected a match for Arzt für Allgemeinmedizin')
+  assert.equal(facts.regulated, true)
+})
