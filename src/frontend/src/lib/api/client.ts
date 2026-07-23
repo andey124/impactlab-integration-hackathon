@@ -1,8 +1,12 @@
 import { PUBLIC_API_BASE_URL } from '$env/static/public';
 import type { NextStep, PathNode } from '$lib/types';
 
-async function request<T>(path: string, init?: RequestInit): Promise<T> {
-	const response = await fetch(`${PUBLIC_API_BASE_URL}${path}`, {
+async function request<T>(
+	path: string,
+	init?: RequestInit,
+	fetchImpl: typeof fetch = fetch
+): Promise<T> {
+	const response = await fetchImpl(`${PUBLIC_API_BASE_URL}${path}`, {
 		...init,
 		headers: { 'Content-Type': 'application/json', ...init?.headers }
 	});
@@ -12,8 +16,8 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 	return response.json() as Promise<T>;
 }
 
-export function fetchPath(): Promise<{ nodes: PathNode[] }> {
-	return request('/api/path');
+export function fetchPath(fetchImpl: typeof fetch = fetch): Promise<{ nodes: PathNode[] }> {
+	return request('/api/path', undefined, fetchImpl);
 }
 
 export function analyzeDocument(
