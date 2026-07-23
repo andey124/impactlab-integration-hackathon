@@ -82,3 +82,31 @@ export function markDone(id: string): PathNode | null {
   const row = db.prepare('SELECT * FROM nodes WHERE id = ?').get(id) as unknown as Row
   return toNode(row)
 }
+
+export function updateNode(
+  id: string,
+  patch: Partial<Pick<PathNode, 'title' | 'translation' | 'nextSteps' | 'status'>>,
+): PathNode | null {
+  const row = db.prepare('SELECT * FROM nodes WHERE id = ?').get(id) as unknown as Row | undefined
+  if (!row) return null
+  // Only overwrite fields actually present in the patch.
+  const next: PathNode = {
+    ...toNode(row),
+    ...(patch.title !== undefined ? { title: patch.title } : {}),
+    ...(patch.translation !== undefined ? { translation: patch.translation } : {}),
+    ...(patch.nextSteps !== undefined ? { nextSteps: patch.nextSteps } : {}),
+    ...(patch.status !== undefined ? { status: patch.status } : {}),
+  }
+  db.prepare('UPDATE nodes SET title = ?, translation = ?, next_steps = ?, status = ? WHERE id = ?').run(
+    next.title,
+    next.translation,
+    JSON.stringify(next.nextSteps),
+    next.status,
+    id,
+  )
+  return next
+}
+
+export function clearNodes(): void {
+  db.exec('DELETE FROM nodes')
+}

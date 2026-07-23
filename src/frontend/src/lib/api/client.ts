@@ -20,6 +20,10 @@ export function fetchPath(fetchImpl: typeof fetch = fetch): Promise<{ nodes: Pat
 	return request('/api/path', undefined, fetchImpl);
 }
 
+export function resetPath(): Promise<{ nodes: PathNode[] }> {
+	return request('/api/path', { method: 'DELETE' });
+}
+
 export function analyzeDocument(
 	images: string[],
 	targetLang: string
@@ -45,5 +49,15 @@ export function markNodeDone(id: string): Promise<{ node: PathNode }> {
 	return request(`/api/path/nodes/${id}`, {
 		method: 'PATCH',
 		body: JSON.stringify({ status: 'done' })
+	});
+}
+
+export function updateNode(
+	id: string,
+	patch: { title?: string; translation?: string; nextSteps?: NextStep[] }
+): Promise<{ node: PathNode }> {
+	return request(`/api/path/nodes/${id}`, {
+		method: 'PATCH',
+		body: JSON.stringify(patch)
 	});
 }

@@ -18,7 +18,7 @@
 			const { node } = await createNode(title, translation, nextSteps);
 			pathState.addNode(node);
 			uploadDraft.reset();
-			goto('/');
+			goto('/path');
 		} catch {
 			error = "That didn't work — let's try again.";
 			uploadDraft.status = 'capturing';

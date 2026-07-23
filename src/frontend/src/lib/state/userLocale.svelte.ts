@@ -23,6 +23,12 @@ class UserLocale {
 			localStorage.setItem(STORAGE_KEY, JSON.stringify({ lang: this.lang, confirmed: true }));
 		}
 	}
+
+	reset() {
+		this.lang = 'en';
+		this.confirmed = false;
+		if (browser) localStorage.removeItem(STORAGE_KEY);
+	}
 }
 
 export const userLocale = new UserLocale();

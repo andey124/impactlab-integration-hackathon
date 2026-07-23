@@ -48,4 +48,13 @@ describe('pathState', () => {
 		pathState.addNode(makeNode({ id: '1' }));
 		expect(pathState.justAddedId).toBe('1');
 	});
+
+	it('updateNode replaces only the matching node', () => {
+		pathState.addNode(makeNode({ id: '1', title: 'A' }));
+		pathState.addNode(makeNode({ id: '2', title: 'B' }));
+		pathState.updateNode(makeNode({ id: '2', title: 'B edited', translation: 'changed' }));
+		expect(pathState.nodes[0].title).toBe('A');
+		expect(pathState.nodes[1].title).toBe('B edited');
+		expect(pathState.nodes[1].translation).toBe('changed');
+	});
 });

@@ -22,6 +22,10 @@ class PathState {
 			node.id === id ? { ...node, status: 'done' as const } : node
 		);
 	}
+
+	updateNode(updated: PathNode) {
+		this.nodes = this.nodes.map((node) => (node.id === updated.id ? updated : node));
+	}
 }
 
 export const pathState = new PathState();

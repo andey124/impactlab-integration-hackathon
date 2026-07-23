@@ -7,7 +7,7 @@
 
 <main class="app-shell">
 	<Brand />
-	<button class="btn btn-ghost" style="align-self:flex-start" onclick={() => goto('/')}>
+	<button class="btn btn-ghost" style="align-self:flex-start" onclick={() => goto('/path')}>
 		← Back
 	</button>
 	<div class="card">

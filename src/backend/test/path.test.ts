@@ -82,3 +82,49 @@ test('PATCH rejects an unknown id with 404 and a bad status with 400', async (t)
   const bad = await patch(`${s.url}/api/path/nodes/${node.id}`, { status: 'active' })
   assert.equal(bad.status, 400)
 })
+
+test('PATCH edits title/translation/nextSteps without touching status', async (t) => {
+  const s = await serve(app)
+  t.after(() => s.close())
+  const created = await post(`${s.url}/api/path/nodes`, {
+    title: 'Old',
+    translation: 'old text',
+    nextSteps: [{ text: 'a' }],
+  })
+  const { node } = (await created.json()) as { node: { id: string } }
+
+  const res = await patch(`${s.url}/api/path/nodes/${node.id}`, {
+    title: 'New',
+    translation: 'new text',
+    nextSteps: [{ text: 'b' }, { text: 'c' }],
+  })
+  assert.equal(res.status, 200)
+  const body = (await res.json()) as { node: { title: string; translation: string; status: string; nextSteps: unknown[] } }
+  assert.equal(body.node.title, 'New')
+  assert.equal(body.node.translation, 'new text')
+  assert.equal(body.node.nextSteps.length, 2)
+  assert.equal(body.node.status, 'active', 'editing must not change status')
+})
+
+test('PATCH with an empty body is rejected with 400', async (t) => {
+  const s = await serve(app)
+  t.after(() => s.close())
+  const created = await post(`${s.url}/api/path/nodes`, { title: 'S', translation: 't', nextSteps: [] })
+  const { node } = (await created.json()) as { node: { id: string } }
+  const res = await patch(`${s.url}/api/path/nodes/${node.id}`, {})
+  assert.equal(res.status, 400)
+})
+
+test('DELETE /api/path clears every node', async (t) => {
+  const s = await serve(app)
+  t.after(() => s.close())
+  await post(`${s.url}/api/path/nodes`, { title: 'A', translation: 't', nextSteps: [] })
+  await post(`${s.url}/api/path/nodes`, { title: 'B', translation: 't', nextSteps: [] })
+
+  const del = await fetch(`${s.url}/api/path`, { method: 'DELETE' })
+  assert.equal(del.status, 200)
+  assert.deepEqual(await del.json(), { nodes: [] })
+
+  const listed = await fetch(`${s.url}/api/path`)
+  assert.deepEqual(await listed.json(), { nodes: [] })
+})

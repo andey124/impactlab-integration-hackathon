@@ -12,7 +12,7 @@ const frontendOrigin = process.env.FRONTEND_ORIGIN ?? 'http://localhost:5173'
 app.use((req, res, next) => {
   res.set('Access-Control-Allow-Origin', frontendOrigin)
   res.set('Access-Control-Allow-Headers', 'Content-Type')
-  res.set('Access-Control-Allow-Methods', 'GET,POST,PATCH,OPTIONS')
+  res.set('Access-Control-Allow-Methods', 'GET,POST,PATCH,DELETE,OPTIONS')
   if (req.method === 'OPTIONS') {
     res.sendStatus(204)
     return
